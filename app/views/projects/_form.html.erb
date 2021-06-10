@@ -1,0 +1,57 @@
+<%= form_with(model: project, local: true, multipart: true) do |form| %>
+  <% if project.errors.any? %>
+    <div id="error_explanation" class="p-6 mb-5 text-red-500 bg-white rounded">
+      <h2 class="font-bold text-red-500"><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+        <% project.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-6">
+    <%= form.label :thumbnail, "Project thumbnail", class: "label" %>
+    <%= form.file_field :thumbnail %>
+  </div>
+
+  <div class="mb-6">
+    <%= form.label :title, class: "label" %>
+    <%= form.text_field :title, class: "input" %>
+  </div>
+
+  <div class="mb-6">
+    <%= form.label :donation_goal, class: "label" %>
+    <%= form.text_field :donation_goal, class: "input" %>
+  </div>
+
+  <div class="mb-6">
+    <%= form.label :description, class: "label" %>
+    <%= form.rich_text_area :description, class: "input" %>
+  </div>
+
+  <div class="my-10">
+    <h3 class="text-2xl">Perks</h3>
+
+    <div data-controller="nested-form">
+      <template data-target='nested-form.template'>
+        <%= form.fields_for :perks, Perk.new, child_index: 'TEMPLATE_RECORD' do |perk| %>
+          <%= render 'perk_fields', form: perk %>
+        <% end %>
+      </template>
+
+      <%= form.fields_for :perks do |perk| %>
+        <%= render 'perk_fields', form: perk %>
+      <% end %>
+
+      <div data-target="nested-form.add_perk">
+        <%= link_to "Add Perk", "#", data: { action: "nested-form#add_association" }, class: "btn btn-white" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-6">
+    <%= form.submit class: "btn btn-default" %>
+  </div>
+<% end %>
